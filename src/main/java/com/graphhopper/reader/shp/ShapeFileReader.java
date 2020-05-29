@@ -26,6 +26,7 @@ import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
+import org.locationtech.jts.geom.Coordinate;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
@@ -36,7 +37,6 @@ import com.graphhopper.storage.Graph;
 import com.graphhopper.storage.GraphHopperStorage;
 import com.graphhopper.storage.GraphStorage;
 import com.graphhopper.storage.NodeAccess;
-import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * ShapeFileReader takes care of reading a shape file and writing it to a road network graph
@@ -91,7 +91,7 @@ public abstract class ShapeFileReader implements DataReader {
         try {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("url", file.toURI().toURL());
-            map.put("charset", encoding);
+            // map.put("charset", encoding);
             DataStore ds = DataStoreFinder.getDataStore(map);
             if (ds == null)
                 throw new IllegalArgumentException("Cannot find DataStore at " + file);

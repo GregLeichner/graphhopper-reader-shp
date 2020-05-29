@@ -12,9 +12,9 @@
     <properties>      
 	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-        <geotools.version>19.0</geotools.version>
-        <slf4j.version>1.7.25</slf4j.version>
+        <graphhopper.version>1.0</graphhopper.version>
+        <geotools.version>23.0</geotools.version>
+        <slf4j.version>1.7.30</slf4j.version>
 	<log4j.version>1.2.17</log4j.version>
     </properties>
     	
@@ -22,15 +22,15 @@
         <dependency>
             <groupId>com.graphhopper</groupId>
             <artifactId>graphhopper-core</artifactId>
-            <version>0.12.0-pre1</version>
+            <version>${graphhopper.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-shapefile</artifactId>
             <version>${geotools.version}</version>
         </dependency>
-		
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -48,6 +48,7 @@
             <version>${log4j.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -57,9 +58,10 @@
         <dependency>
             <groupId>com.graphhopper</groupId>
             <artifactId>graphhopper-reader-osm</artifactId>
-            <version>${project.version}</version>
+            <version>${graphhopper.version}</version>
             <scope>test</scope>
         </dependency>        
+
     </dependencies>
     <build>
         <plugins>
@@ -74,12 +76,5 @@
             </plugin>
         </plugins>
     </build>
-    <repositories>
-        <repository>
-            <id>osgeo</id>
-            <name>Open Source Geospatial Foundation Repository</name>
-            <url>http://download.osgeo.org/webdav/geotools/</url>
-        </repository>
-    </repositories>
-	
+
 </project>

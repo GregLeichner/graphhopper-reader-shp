@@ -21,17 +21,18 @@ import com.graphhopper.coll.GHObjectIntHashMap;
 import com.graphhopper.reader.DataReader;
 import com.graphhopper.reader.ReaderWay;
 import com.graphhopper.reader.dem.ElevationProvider;
+import com.graphhopper.routing.util.EncodingManager;
 import com.graphhopper.storage.GraphHopperStorage;
+import com.graphhopper.storage.IntsRef;
 import com.graphhopper.util.DistanceCalc;
 import com.graphhopper.util.EdgeIteratorState;
-import com.graphhopper.util.Helper;
 import com.graphhopper.util.PointList;
 import com.graphhopper.util.shapes.GHPoint;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
 import org.geotools.data.DataStore;
 import org.geotools.feature.FeatureIterator;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
 import org.opengis.feature.simple.SimpleFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -326,17 +327,19 @@ public class OSMShapeFileReader extends ShapeFileReader {
         }
 
         // Process the flags using the encoders
-        long includeWay = encodingManager.acceptWay(way);
-        if (includeWay == 0) {
+        EncodingManager.AcceptWay acceptWay = new EncodingManager.AcceptWay();
+        boolean includeWay = encodingManager.acceptWay(way, acceptWay);
+        if (!includeWay) {
             return;
         }
 
         // TODO we're not using the relation flags
         long relationFlags = 0;
 
-        long wayFlags = encodingManager.handleWayTags(way, includeWay, relationFlags);
-        if (wayFlags == 0)
+        IntsRef wayFlags = encodingManager.handleWayTags(way, acceptWay, IntsRef.EMPTY);
+        if (wayFlags.isEmpty()) {
             return;
+        }
 
         edge.setDistance(distance);
         edge.setFlags(wayFlags);

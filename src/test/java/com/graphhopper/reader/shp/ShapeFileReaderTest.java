@@ -27,6 +27,8 @@ import java.net.URL;
 import java.util.DoubleSummaryStatistics;
 import java.util.Random;
 
+import com.graphhopper.ResponsePath;
+import com.graphhopper.config.Profile;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -35,7 +37,6 @@ import org.junit.Test;
 import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
-import com.graphhopper.PathWrapper;
 import com.graphhopper.reader.osm.GraphHopperOSM;
 import com.graphhopper.routing.util.CarFlagEncoder;
 import com.graphhopper.routing.util.EncodingManager;
@@ -72,8 +73,8 @@ public class ShapeFileReaderTest {
             this.to = to;
         }
 
-        PathWrapper getPath(GraphHopper hopper, boolean assertNoErrors) {
-            GHRequest request = new GHRequest(from, to).setVehicle("car");
+        ResponsePath getPath(GraphHopper hopper, boolean assertNoErrors) {
+            GHRequest request = new GHRequest(from, to).setProfile("car");
             GHResponse response = hopper.route(request);
 
             if (assertNoErrors) {
@@ -113,8 +114,9 @@ public class ShapeFileReaderTest {
         gh.setWayPointMaxDistance(0);
         return gh.setStoreOnFlush(false).setDataReaderFile(inputFile)
                 .setGraphHopperLocation(new File(outDir).getAbsolutePath())
-                .setEncodingManager(new EncodingManager(new CarFlagEncoder()))
-                .setCHEnabled(false).importOrLoad();
+                .setEncodingManager(EncodingManager.create(new CarFlagEncoder()))
+                .setEnableCalcPoints(false)
+                .importOrLoad();
 
     }
 
@@ -177,8 +179,8 @@ public class ShapeFileReaderTest {
         // shapefile and pbf.
         // We should also get route distance to be many times physical distance
         FromToPair pair = new FromToPair(35.898324, 14.510729, 35.898328, 14.510681);
-        PathWrapper shp = pair.getPath(hopperShp, true);
-        PathWrapper pbf = pair.getPath(hopperPbf, true);
+        ResponsePath shp = pair.getPath(hopperShp, true);
+        ResponsePath pbf = pair.getPath(hopperPbf, true);
         double metresShp = shp.getDistance();
         double metresPbf = pbf.getDistance();
 
@@ -240,8 +242,8 @@ public class ShapeFileReaderTest {
                     pointGenerator.randPoint());
 
             // paths from random points can fail to don't assert on failure
-            PathWrapper shpPath = pair.getPath(hopperShp, false);
-            PathWrapper pbfPath = pair.getPath(hopperPbf, false);
+            ResponsePath shpPath = pair.getPath(hopperShp, false);
+            ResponsePath pbfPath = pair.getPath(hopperPbf, false);
 
             // paths between random points can fail to find a route (i.e. be off
             // the road network)
@@ -303,8 +305,8 @@ public class ShapeFileReaderTest {
 
     }
 
-    private static double getSecondsTravel(PathWrapper pw) {
-        long millis = pw.getTime();
+    private static double getSecondsTravel(ResponsePath rp) {
+        long millis = rp.getTime();
         double secs = 0.001 * millis;
         return secs;
     }
